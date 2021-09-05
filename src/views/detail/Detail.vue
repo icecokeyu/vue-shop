@@ -5,9 +5,8 @@
       <detail-swiper :top-images="topImages"/>
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop" />
-      <detail-goods-info :detail-info="detailInfo"/>
+      <detail-goods-info :images-info="imagesInfo"/>
     </scroll>
-
   </div>
 </template>
 
@@ -24,6 +23,7 @@ import {getDetail, Goods, Shop} from "network/detail.js"
 
 
 
+
 export default {
   name: "Detail",
   components: { 
@@ -31,8 +31,8 @@ export default {
     DetailSwiper,
     DetailBaseInfo,
     DetailShopInfo,
-    DetailGoodsInfo,
     Scroll,
+    DetailGoodsInfo,
   },
   data() {
     return {
@@ -40,7 +40,7 @@ export default {
       topImages: [],
       goods: {},
       shop: {},
-      detailInfo: {}
+      imagesInfo: {}
     };
   },
   created() {
@@ -64,7 +64,7 @@ export default {
       this.shop = new Shop(data.shopInfo);
 
       // 5.获取商品详情数据
-      this.detailInfo = data.detailInfo;
+      this.imagesInfo = data.detailInfo;
     })
 
     
@@ -87,6 +87,8 @@ export default {
   }
 
   .content {
-    height: calc(100% - 44px);
+    position: absolute;
+    top: 44px;
+    bottom: 60px;
   }
 </style>
