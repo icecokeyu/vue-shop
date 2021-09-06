@@ -1,11 +1,12 @@
 <template>
   <div id="detail">
     <detail-nav-bar class="detail-nav"/>
-    <scroll class="content">
+    <scroll class="content" ref="scroll">
       <detail-swiper :top-images="topImages"/>
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop" />
-      <detail-goods-info :images-info="imagesInfo"/>
+      <detail-goods-info :images-info="imagesInfo" @imgLoad="imgLoad"/>
+      <detail-params-info :param-info="param-info"/>
     </scroll>
   </div>
 </template>
@@ -20,6 +21,7 @@ import DetailGoodsInfo from './childComps/DetailGoodsInfo.vue';
 import Scroll from 'components/common/scroll/Scroll'
 
 import {getDetail, Goods, Shop} from "network/detail.js"
+import DetailParamsInfo from './childComps/DetailParamsInfo.vue';
 
 
 
@@ -33,6 +35,7 @@ export default {
     DetailShopInfo,
     Scroll,
     DetailGoodsInfo,
+    DetailParamsInfo,
   },
   data() {
     return {
@@ -40,7 +43,8 @@ export default {
       topImages: [],
       goods: {},
       shop: {},
-      imagesInfo: {}
+      imagesInfo: {},
+      paramInfo: {}
     };
   },
   created() {
@@ -65,10 +69,21 @@ export default {
 
       // 5.获取商品详情数据
       this.imagesInfo = data.detailInfo;
+
+      // 6.获取商品参数信息
+      this.paramInfo = new GoodsParam(
+        data.itemParams.info,
+        data.itemParams.rule
+      );
     })
 
     
   }, 
+  methods: {
+    imgLoad() {
+      this.$refs.scroll.refresh()
+    }
+  }
 };
 </script>
 
