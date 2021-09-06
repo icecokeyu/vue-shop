@@ -6,7 +6,8 @@
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop" />
       <detail-goods-info :images-info="imagesInfo" @imgLoad="imgLoad"/>
-      <detail-params-info :param-info="param-info"/>
+      <detail-params-info :param-info="paramInfo"/>
+      <detail-comment-info :comment-info="commentInfo"/>
     </scroll>
   </div>
 </template>
@@ -17,13 +18,12 @@ import DetailSwiper from './childComps/DetailSwiper.vue';
 import DetailBaseInfo from './childComps/DetailBaseInfo.vue'
 import DetailShopInfo from './childComps/DetailShopInfo.vue'
 import DetailGoodsInfo from './childComps/DetailGoodsInfo.vue';
+import DetailParamsInfo from './childComps/DetailParamsInfo.vue';
+import DetailCommentInfo from './childComps/DetailCommentInfo.vue';
 
 import Scroll from 'components/common/scroll/Scroll'
 
-import {getDetail, Goods, Shop} from "network/detail.js"
-import DetailParamsInfo from './childComps/DetailParamsInfo.vue';
-
-
+import {getDetail, Goods, Shop, GoodsParam} from "network/detail.js"
 
 
 export default {
@@ -36,6 +36,7 @@ export default {
     Scroll,
     DetailGoodsInfo,
     DetailParamsInfo,
+    DetailCommentInfo
   },
   data() {
     return {
@@ -44,7 +45,8 @@ export default {
       goods: {},
       shop: {},
       imagesInfo: {},
-      paramInfo: {}
+      paramInfo: {},
+      commentInfo: {}
     };
   },
   created() {
@@ -75,9 +77,12 @@ export default {
         data.itemParams.info,
         data.itemParams.rule
       );
+      // 7.获取商品评论信息
+      // 先进行判断，判断商品有无评论信息
+      if (data.rate.cRate !== 0) {
+          this.commentInfo = data.rate.list[0] || {};
+        }
     })
-
-    
   }, 
   methods: {
     imgLoad() {
