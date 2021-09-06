@@ -8,6 +8,7 @@
       <detail-goods-info :images-info="imagesInfo" @imgLoad="imgLoad"/>
       <detail-params-info :param-info="paramInfo"/>
       <detail-comment-info :comment-info="commentInfo"/>
+      <goods-list :goods="recommends"/>
     </scroll>
   </div>
 </template>
@@ -20,10 +21,12 @@ import DetailShopInfo from './childComps/DetailShopInfo.vue'
 import DetailGoodsInfo from './childComps/DetailGoodsInfo.vue';
 import DetailParamsInfo from './childComps/DetailParamsInfo.vue';
 import DetailCommentInfo from './childComps/DetailCommentInfo.vue';
+import GoodsList from 'components/content/goods/GoodsList.vue';
 
 import Scroll from 'components/common/scroll/Scroll'
 
-import {getDetail, Goods, Shop, GoodsParam} from "network/detail.js"
+import {getDetail, Goods, Shop, GoodsParam, getRecommend} from "network/detail.js"
+
 
 
 export default {
@@ -36,7 +39,8 @@ export default {
     Scroll,
     DetailGoodsInfo,
     DetailParamsInfo,
-    DetailCommentInfo
+    DetailCommentInfo,
+    GoodsList
   },
   data() {
     return {
@@ -46,7 +50,8 @@ export default {
       shop: {},
       imagesInfo: {},
       paramInfo: {},
-      commentInfo: {}
+      commentInfo: {},
+      recommends: [],
     };
   },
   created() {
@@ -83,6 +88,11 @@ export default {
           this.commentInfo = data.rate.list[0] || {};
         }
     })
+     // 8.请求推荐数据
+    getRecommend().then((res) => {
+      console.log(res);
+      this.recommends = res.data.list;
+    });
   }, 
   methods: {
     imgLoad() {
