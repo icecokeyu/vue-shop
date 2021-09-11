@@ -104,7 +104,7 @@ export default {
 
     const refresh = debounce(this.$refs.scroll.refresh, 200)
     // 使用this.$refs 或者document.querySeletor方法等时 一定要再mounted里面使用
-    this.$bus.$on("itemImageLoad", () => {
+    this.$bus.$on("homeItemImgLoad", () => {
       refresh();
     });
   },

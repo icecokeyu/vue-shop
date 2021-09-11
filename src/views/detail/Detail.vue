@@ -27,6 +27,8 @@ import Scroll from 'components/common/scroll/Scroll'
 
 import {getDetail, Goods, Shop, GoodsParam, getRecommend} from "network/detail.js"
 
+import {debounce} from "common/utils.js"
+
 
 
 export default {
@@ -94,6 +96,16 @@ export default {
       this.recommends = res.data.list;
     });
   }, 
+  mounted() {
+    // 获取tabControl的offsetTop值 这样获取的offsetTop值是不正确的，因为图片还未加载完，高度不对
+    // console.log(this.$refs.tabControl.$el.offsetTop);
+
+    const refresh = debounce(this.$refs.scroll.refresh, 200)
+    // 使用this.$refs 或者document.querySeletor方法等时 一定要再mounted里面使用
+    this.$bus.$on("detailItemImgLoad", () => {
+      refresh();
+    });
+  },
   methods: {
     imgLoad() {
       this.$refs.scroll.refresh()
