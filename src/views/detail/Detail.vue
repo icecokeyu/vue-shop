@@ -1,15 +1,16 @@
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav"/>
-    <scroll class="content" ref="scroll">
+    <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="nav"/>
+    <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <detail-swiper :top-images="topImages"/>
       <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop" />
       <detail-goods-info :images-info="imagesInfo" @imgLoad="imgLoad"/>
-      <detail-params-info :param-info="paramInfo"/>
-      <detail-comment-info :comment-info="commentInfo"/>
-      <goods-list :goods="recommends"/>
+      <detail-params-info ref="params" :param-info="paramInfo"/>
+      <detail-comment-info ref="comment" :comment-info="commentInfo"/>
+      <goods-list ref="recommend" :goods="recommends"/>
     </scroll>
+    <detail-bottom-bar />
   </div>
 </template>
 
@@ -21,6 +22,7 @@ import DetailShopInfo from './childComps/DetailShopInfo.vue'
 import DetailGoodsInfo from './childComps/DetailGoodsInfo.vue';
 import DetailParamsInfo from './childComps/DetailParamsInfo.vue';
 import DetailCommentInfo from './childComps/DetailCommentInfo.vue';
+import DetailBottomBar from './childComps/DetailBottomBar.vue'
 import GoodsList from 'components/content/goods/GoodsList.vue';
 
 import Scroll from 'components/common/scroll/Scroll'
@@ -42,7 +44,8 @@ export default {
     DetailGoodsInfo,
     DetailParamsInfo,
     DetailCommentInfo,
-    GoodsList
+    DetailBottomBar,
+    GoodsList,
   },
   data() {
     return {
@@ -54,6 +57,9 @@ export default {
       paramInfo: {},
       commentInfo: {},
       recommends: [],
+      themeTopYs:[],
+      getThemeTopYs: null,
+      currentIndex: 0
     };
   },
   created() {
@@ -62,7 +68,7 @@ export default {
     // 2.根据iid请求详情数据
     getDetail(this.iid).then((res) => {
       // 1.获取顶部的图片
-      console.log(res);
+      // console.log(res);
       this.topImages = res.result.itemInfo.topImages;
 
       //3.获取商品信息
@@ -92,7 +98,7 @@ export default {
     })
      // 8.请求推荐数据
     getRecommend().then((res) => {
-      console.log(res);
+      // console.log(res);
       this.recommends = res.data.list;
     });
   }, 
@@ -109,6 +115,48 @@ export default {
   methods: {
     imgLoad() {
       this.$refs.scroll.refresh()
+      this.getThemeTopYs = debounce(() => {
+        this.themeTopYs.push(0)
+        this.themeTopYs.push(this.$refs.params.$el.offsetTop)
+        this.themeTopYs.push(this.$refs.comment.$el.offsetTop)
+        this.themeTopYs.push(this.$refs.recommend.$el.offsetTop)
+        this.themeTopYs.push(Number.MAX_VALUE)
+      })
+      this.getThemeTopYs()
+      console.log(this.themeTopYs);
+    },
+    titleClick(index) {
+      // console.log(index);
+      this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 500)
+    },
+    contentScroll(position) {
+      // console.log(position);
+      // 1.获取Y值
+
+      const positionY = -position.y;
+      // console.log(positionY);
+      // 2.positionY和主题中进行对比
+      // [0, 11251, 11843, 12037, Number.MAX_VALUE]
+    
+      // positionY在0 和 11251之间，index = 0
+      // positionY在11251 和 11843之间，index = 1
+      // positionY在11843 和 12037之间，index = 2
+      // positionY大于等于12027，index = 3
+      let length = this.themeTopYs.length
+      for(let i = 0; i < length - 1; i++ ) {
+        // 方法一
+        // if(this.currentIndex !== i && ((i < length - 1 && positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1]) || (i === length - 1 && positionY >= this.themeTopYs[i]))) {
+        //   this.currentIndex = i;
+        //   this.$refs.nav.currentIndex = this.currentIndex
+        // }
+
+        // 方法二
+        if(this.currentIndex !== i && (positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])) {
+          this.currentIndex = i;
+          // console.log(this.currentIndex);
+          this.$refs.nav.currentIndex = this.currentIndex
+        }
+      }
     }
   }
 };
