@@ -10,7 +10,8 @@
       <detail-comment-info ref="comment" :comment-info="commentInfo"/>
       <goods-list ref="recommend" :goods="recommends"/>
     </scroll>
-    <detail-bottom-bar />
+    <detail-bottom-bar @addCart="addToCart"/>
+    <back-top @click.native="backClick" v-show="isShowBackTop" />
   </div>
 </template>
 
@@ -24,17 +25,20 @@ import DetailParamsInfo from './childComps/DetailParamsInfo.vue';
 import DetailCommentInfo from './childComps/DetailCommentInfo.vue';
 import DetailBottomBar from './childComps/DetailBottomBar.vue'
 import GoodsList from 'components/content/goods/GoodsList.vue';
+import BackTop from "components/content/backTop/BackTop.vue";
 
 import Scroll from 'components/common/scroll/Scroll'
 
 import {getDetail, Goods, Shop, GoodsParam, getRecommend} from "network/detail.js"
 
 import {debounce} from "common/utils.js"
+import {backTopMixin} from "common/mixin.js"
 
 
 
 export default {
   name: "Detail",
+  mixins: [backTopMixin],
   components: { 
     DetailNavBar,
     DetailSwiper,
@@ -46,6 +50,7 @@ export default {
     DetailCommentInfo,
     DetailBottomBar,
     GoodsList,
+    BackTop
   },
   data() {
     return {
@@ -59,7 +64,7 @@ export default {
       recommends: [],
       themeTopYs:[],
       getThemeTopYs: null,
-      currentIndex: 0
+      currentIndex: 0,
     };
   },
   created() {
@@ -68,7 +73,7 @@ export default {
     // 2.根据iid请求详情数据
     getDetail(this.iid).then((res) => {
       // 1.获取顶部的图片
-      // console.log(res);
+      console.log(res);
       this.topImages = res.result.itemInfo.topImages;
 
       //3.获取商品信息
@@ -157,6 +162,19 @@ export default {
           this.$refs.nav.currentIndex = this.currentIndex
         }
       }
+      this.isShowBackTop = -position.y > 1000;
+    },
+    addToCart() {
+      // 1.获取在购物车需要展示的信息 一张图片，标题，描述，最新价格，iid
+      const product = {};
+      product.image = this.topImages[0];
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.realPrice;
+      product.iid = this.iid
+
+      // 2.将商品添加到购物车里
+      
     }
   }
 };

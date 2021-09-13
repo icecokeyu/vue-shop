@@ -47,9 +47,11 @@ import BackTop from "components/content/backTop/BackTop.vue";
 // 请求数据的函数导入
 import { getHomeMultidata, getHomeGoods } from "network/home";
 import { debounce } from "common/utils";
+import {backTopMixin} from "common/mixin.js"
 
 export default {
   name: "Home",
+  mixins: [backTopMixin],
   components: {
     // 顺序最好和导入组件的顺序一致
     HomeSwiper,
@@ -71,7 +73,6 @@ export default {
         sell: { page: 0, list: [] },
       },
       currentType: "pop",
-      isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
       scrollY: 0
@@ -131,13 +132,13 @@ export default {
       this.$refs.tabControl1.currentIndex = index;
       this.$refs.tabControl2.currentIndex = index;
     },
-    backClick() {
-      // console.log('点击了backtop组件');
-      // this.$refs.scroll.scroll.scrollTo(0, 0, 300)
-      // this.$refs.scroll拿到的是scroll组件,.scroll拿到的是scroll对象，.scrollTo调用的是对象的方法
-      this.$refs.scroll.scrollTo(0, 0, 300);
-      // this.$refs.scroll拿到的是scroll组件，.scrollTo调用的是组件的方法，给组件封装了方法
-    },
+    // backClick() {
+    //   // console.log('点击了backtop组件');
+    //   // this.$refs.scroll.scroll.scrollTo(0, 0, 300)
+    //   // this.$refs.scroll拿到的是scroll组件,.scroll拿到的是scroll对象，.scrollTo调用的是对象的方法
+    //   this.$refs.scroll.scrollTo(0, 0, 300);
+    //   // this.$refs.scroll拿到的是scroll组件，.scrollTo调用的是组件的方法，给组件封装了方法
+    // },
     contentScroll(position) {
       // 设置backTop按钮是否隐藏
       this.isShowBackTop = -position.y > 1000;
