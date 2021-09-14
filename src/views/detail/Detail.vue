@@ -1,5 +1,6 @@
 <template>
   <div id="detail">
+    <div>{{$store.state.cartList.length}}</div>
     <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="nav"/>
     <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <detail-swiper :top-images="topImages"/>
@@ -174,7 +175,7 @@ export default {
       product.iid = this.iid
 
       // 2.将商品添加到购物车里
-      
+      this.$store.commit('addCart', product)
     }
   }
 };
@@ -182,6 +183,7 @@ export default {
 
 <style scoped>
   #detail {
+
     position: relative;
     z-index: 9;
     background-color: #fff;
