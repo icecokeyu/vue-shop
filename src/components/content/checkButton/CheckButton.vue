@@ -11,7 +11,7 @@ export default {
     isChecked:{
       type: Boolean,
       default() {
-        return true
+        return false
       }
     }
   }
@@ -19,7 +19,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   .check-button {
     border-radius: 50%;
     border: 2px solid #aaa;

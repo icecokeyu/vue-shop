@@ -4,6 +4,7 @@
       <div slot="center">购物车({{ cartLength }})</div>
     </nav-bar>
     <cart-list class="cart-list"></cart-list>
+    <cart-bottom-bar></cart-bottom-bar>
   </div>
 </template>
 
@@ -16,10 +17,16 @@ import CartList from './childComps/CartList.vue'
 import {mapGetters} from 'vuex'
 
 import Scroll from '../../components/common/scroll/Scroll.vue'
+import CartBottomBar from './childComps/CartBottomBar.vue'
 
 export default {
   name: 'Cart',
-  components: { NavBar, CartList, Scroll },
+  components: {
+  NavBar, 
+  CartList, 
+  Scroll,
+  CartBottomBar
+   },
   computed: {
     // cartLength() {
     //   return this.$store.getters.cartLength
